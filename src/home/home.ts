@@ -1,12 +1,23 @@
 import './home.css';
 
-// 기술적으로 깨달아야한다. 그것 적어서 알아야해,, 할 수 있다.
 function Home() {
-  console.log('home comming!!');
+  const homeRootElement = document.createElement('div');
+  homeRootElement.innerText = 'home page is here!!';
 
-  console.log(window.location);
+  const asdfButton = document.createElement('button');
+  asdfButton.innerText = 'To Asdf!!';
+  asdfButton.addEventListener('click', () => {
+    window.history.pushState({ root: '/asdf' }, null, '/asdf');
+  });
+
+  const colorTestDiv = document.createElement('div');
+  colorTestDiv.className = 'color';
+  colorTestDiv.innerText = "It's color Test Div!!!!";
+
+  homeRootElement.appendChild(asdfButton);
+  homeRootElement.appendChild(colorTestDiv);
+
+  return homeRootElement;
 }
 
-export default {
-  js: Home,
-};
+export default Home;

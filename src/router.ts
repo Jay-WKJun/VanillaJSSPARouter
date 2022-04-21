@@ -1,8 +1,9 @@
 import home from './home/home';
-console.log(home)
+import asdf from './asdf/asdf';
+
 const route: { [key: string]: any } = {
   '/': home,
-  '/asdf': home,
+  '/asdf': asdf,
 };
 
 export default route;
