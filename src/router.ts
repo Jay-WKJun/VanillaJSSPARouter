@@ -1,5 +1,5 @@
 // 싱글톤 객체로 관리한다.
-// 아주 하나의 라이브러리로서 낼 수 있도록 단단하게 응집시켜놓기
+// 단단하게 router 관련 모든 로직과 데이터를 응집하는 것이 목표
 type Component = () => Element;
 
 class Router {
@@ -37,30 +37,27 @@ class Router {
     };
   };
 
-  private move = () => {
-    const currentPath = window.location.pathname;
-    // 여기서 currentPage를 읽기 전에 dynamic인지 아닌지 판단해야한다.
+  private findPath = (currentPath: string, routerPaths: string[]) => {
     // 만약 dynamic이라면, pathname에서 :id위치의 값을 추출해서 param에 저장하고 :id로 변환해서 줘야한다.
+    // dynamic의 기준은 ":"
     const currentPathSplit: string[] = currentPath.split('/');
-    const routerPaths = Object.keys(this.router);
     let isEqual = true;
-    let targetPage: () => Element | null = null;
+    let targetPath: () => Element | null = null;
     const mapper: { [paramKey: string]: string } = {};
     for (let i = 0; i < routerPaths.length; i++) {
       const routerPath = routerPaths[i];
-      isEqual = true;
+      const ithRouterSplit = routerPath.split('/');
 
       // 그냥 정확히 일치하면 끝
       if (routerPath === currentPath) {
-        targetPage = this.router[routerPath];
+        targetPath = this.router[routerPath];
         break;
       }
-
-      const ithRouterSplit = routerPath.split('/');
 
       // 애초에 /로 나눈 길이가 안맞으면 그냥 넘겨야 한다.
       if (ithRouterSplit.length !== currentPathSplit.length) continue;
 
+      isEqual = true;
       for (let j = 0; j < currentPathSplit.length; j++) {
         let ithRouterWord = ithRouterSplit[j];
         const currentPathWord = currentPathSplit[j];
@@ -82,17 +79,26 @@ class Router {
       }
 
       if (isEqual) {
-        targetPage = this.router[routerPath];
+        targetPath = this.router[routerPath];
         break;
       }
     }
 
-    // routerPath를 모두 돌면서 pathArr을 모두 일치시키는 건... 나중에 router가 많아지면 힘들어질 것 같다.
-    // 하지만 routerPath를 찾기 위해 돌지 않으면 안된다.
+    return {
+      targetPath,
+      mapper,
+    }
+  }
 
-    if (targetPage) {
+  private move = () => {
+    const currentPath = window.location.pathname;
+    const routerPaths = Object.keys(this.router);
+
+    const { targetPath, mapper } = this.findPath(currentPath, routerPaths);
+
+    if (targetPath) {
       this.rootElement.innerHTML = '';
-      this.rootElement.appendChild(targetPage());
+      this.rootElement.appendChild(targetPath());
 
       if (mapper) this.query.param = mapper;
       else this.query.param = {};
@@ -104,7 +110,6 @@ class Router {
 
   // 라우트 등록
   set = (route: string, js: Component) => {
-    // 다이나믹 라우트,,, 법칙, :{id} id는 Key값이고 그 뒤의 값을 param으로 제공해야한다.
     // set은 그냥 그대로 하면 됨
     this.router[route] = js;
   }
