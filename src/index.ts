@@ -1,25 +1,7 @@
-import './history';
-import router from './router';
+import Router from './router';
+import Home from './home/home';
+import Asdf from './asdf/asdf';
 
-const root = document.getElementById('root');
-
-window.addEventListener('load', () => {
-  const currentPath = window.location.pathname;
-  const currentPage = router[currentPath];
-  root.innerHTML = '';
-  root.appendChild(currentPage());
-});
-
-window.addEventListener('pushState', () => {
-  const currentPath = window.location.pathname;
-  const currentPage = router[currentPath];
-  root.innerHTML = '';
-  root.appendChild(currentPage());
-});
-
-window.addEventListener('popstate', () => {
-  const currentPath = window.location.pathname;
-  const currentPage = router[currentPath];
-  root.innerHTML = '';
-  root.appendChild(currentPage());
-});
+Router.setRootElement('root');
+Router.set('/', Home);
+Router.set('/asdf', Asdf);

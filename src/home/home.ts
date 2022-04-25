@@ -1,4 +1,5 @@
 import './home.css';
+import router from '../router';
 
 function Home() {
   const homeRootElement = document.createElement('div');
@@ -7,7 +8,7 @@ function Home() {
   const asdfButton = document.createElement('button');
   asdfButton.innerText = 'To Asdf!!';
   asdfButton.addEventListener('click', () => {
-    window.history.pushState({ root: '/asdf' }, null, '/asdf');
+    router.push('/asdf');
   });
 
   const colorTestDiv = document.createElement('div');
