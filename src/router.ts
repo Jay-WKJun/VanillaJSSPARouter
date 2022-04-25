@@ -52,7 +52,7 @@ class Router {
 
       // 그냥 정확히 일치하면 끝
       if (routerPath === currentPath) {
-        targetPage = this.router[routerPaths[i]];
+        targetPage = this.router[routerPath];
         break;
       }
 
@@ -82,7 +82,7 @@ class Router {
       }
 
       if (isEqual) {
-        targetPage = this.router[routerPaths[i]];
+        targetPage = this.router[routerPath];
         break;
       }
     }
