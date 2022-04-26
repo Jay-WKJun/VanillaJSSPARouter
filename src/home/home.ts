@@ -23,6 +23,12 @@ function Home() {
     router.push('/complicate/hhie/something/5678');
   });
 
+  const queryStringButton = document.createElement('button');
+  queryStringButton.innerText = 'To QueryString!!';
+  queryStringButton.addEventListener('click', () => {
+    router.push('/querystring/hahaha/something?somet=123&phone=01033333333&string=agile');
+  });
+
   const colorTestDiv = document.createElement('div');
   colorTestDiv.className = 'color';
   colorTestDiv.innerText = "It's color Test Div!!!!";
@@ -30,6 +36,7 @@ function Home() {
   homeRootElement.appendChild(asdfButton);
   homeRootElement.appendChild(dynamicButton);
   homeRootElement.appendChild(complicateButton);
+  homeRootElement.appendChild(queryStringButton);
   homeRootElement.appendChild(colorTestDiv);
 
   return homeRootElement;

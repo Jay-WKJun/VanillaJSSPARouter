@@ -9,3 +9,4 @@ Router.set('/', Home);
 Router.set('/asdf', Asdf);
 Router.set('/asdf/:id', Dynamic);
 Router.set('/complicate/:id/something/:number', Complicate);
+Router.set('/querystring/:id/:name', Complicate);

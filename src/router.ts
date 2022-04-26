@@ -9,7 +9,11 @@ class Router {
     param: {
       [dynamicPath: string]: string
     }
-  } = { param: {} };
+    query: {
+      key: string
+      val: string
+    }[]
+  } = { param: {}, query: [] };
 
   setRootElement(rootElementId: string) {
     this.rootElement = document.getElementById(rootElementId);
@@ -41,6 +45,7 @@ class Router {
     // 만약 dynamic이라면, pathname에서 :id위치의 값을 추출해서 param에 저장하고 :id로 변환해서 줘야한다.
     // dynamic의 기준은 ":"
     const currentPathSplit: string[] = currentPath.split('/');
+
     let isEqual = true;
     let targetPath: () => Element | null = null;
     const mapper: { [paramKey: string]: string } = {};
@@ -90,21 +95,47 @@ class Router {
     }
   }
 
+  private mapQueryString = (queryString: string) => {
+    // query들 끼리의 구분자
+    const queries = queryString.split('&');
+    const mappedQuery = queries
+      .filter((query) => query)
+      .map((query) => {
+        // key, val 페어 구분자
+        const keyValPair = query.split('=');
+        const key = keyValPair[0];
+        const val = keyValPair[1];
+        return {
+          key,
+          val,
+        };
+      });
+
+    return mappedQuery;
+  }
+
   private move = () => {
+    // 비구조할당시에는 값들이 immutable하게 관리됨, 하지만 . 찍어서놓으면 발동될 때마다 찾아가서 갱신됨.
+    // 비구조할당의 특성으로 값이 갱신이 안되어 문제가 생길 여지가 있음.
     const currentPath = window.location.pathname;
     const routerPaths = Object.keys(this.router);
-
     const { targetPath, mapper } = this.findPath(currentPath, routerPaths);
 
-    if (targetPath) {
-      this.rootElement.innerHTML = '';
-      this.rootElement.appendChild(targetPath());
+    const queryStrings = window.location.search.slice(1);
+    const queries = this.mapQueryString(queryStrings);
 
-      if (mapper) this.query.param = mapper;
-      else this.query.param = {};
+    this.query.param = {};
+    this.query.query = [];
+
+    if (targetPath) {
+      // child를 비우는 데에도 비용이 든다.
+      // this.rootElement.innerHTML = '';
+      this.rootElement.replaceChildren(targetPath());
+
+      this.query.param = mapper;
+      this.query.query = queries;
     } else {
-      this.rootElement.appendChild(this.router[404]());
-      this.query.param = {};
+      this.rootElement.replaceChildren(this.router[404]());
     }
   }
 
